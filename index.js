@@ -8,7 +8,7 @@ var request = require('request');
 var url = require('url');
 var fs = require('fs');
 var Pool = require('generic-pool').Pool;
-var N_CPUS = require('os').cpus().length;
+var N_CPUS = 1 //require('os').cpus().length;
 
 mbgl.on('message', function(msg) {
   console.log(msg);
