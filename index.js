@@ -1,6 +1,6 @@
 var sm = new (require('sphericalmercator'))();
 var mbgl = require('mapbox-gl-native');
-var PNG = require('pngjs').PNG;
+var Png = require('png').Png;
 var vtpbf = require('vt-pbf');
 var stream = require('stream');
 var concat = require('concat-stream');
@@ -118,9 +118,9 @@ GL.prototype.getTile = function(z, x, y, callback) {
     var options = {
         // pass center in lat, lng order
         center: center,
-        width: 256,
-        height: 256,
-        zoom: z-1
+        width: 512,
+        height: 512,
+        zoom: z
     };
 
     this.getStatic(options, callback);
@@ -140,20 +140,13 @@ GL.prototype.getStatic = function(options, callback) {
               that._pool.release(map);
               return callback(err)
             };
+            
+            var png = new Png(data, options.width * that._scale, options.height * that._scale, 'rgba');
 
-            var png = new PNG({
-                width: options.width * that._scale,
-                height: options.height * that._scale
-            });
-
-            png.data = data;
-
-            var concatStream = concat(function(buffer) {
-                return callback(null, buffer, { 'Content-Type': 'image/png' });
-            });
-
-            that._pool.release(map);
-            png.pack().pipe(concatStream);
+            png.encode(function(buffer){
+              that._pool.release(map);
+              return callback(null, buffer, { 'Content-Type': 'image/png' });
+            })
         });
     });
 };

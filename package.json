@@ -22,7 +22,7 @@
     "concat-stream": "^1.5.0",
     "generic-pool": "^2.4.0",
     "mapbox-gl-native": "^3.0.2",
-    "pngjs": "^2.2.0",
+    "png": "git+https://github.com/hannesj/node-png.git",
     "request": "^2.67.0",
     "sphericalmercator": "^1.0.3",
     "url": "^0.11.0",
