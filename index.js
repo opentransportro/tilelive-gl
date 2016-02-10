@@ -8,7 +8,7 @@ var request = require('request');
 var url = require('url');
 var fs = require('fs');
 var Pool = require('generic-pool').Pool;
-var N_CPUS = 1 //require('os').cpus().length;
+var N_CPUS = require('os').cpus().length;
 
 mbgl.on('message', function(msg) {
   console.log(msg);
@@ -110,17 +110,15 @@ GL.registerProtocols = function(tilelive) {
 
 GL.prototype.getTile = function(z, x, y, callback) {
 
-    var scale = this._scale;
-
     var bbox = sm.bbox(+x,+y,+z, false, '900913');
     var center = sm.inverse([bbox[0] + ((bbox[2] - bbox[0]) * 0.5), bbox[1] + ((bbox[3] - bbox[1]) * 0.5)]);
 
     var options = {
         // pass center in lat, lng order
         center: center,
-        width: 512,
-        height: 512,
-        zoom: z
+        width: 256,
+        height: 256,
+        zoom: z-1
     };
 
     this.getStatic(options, callback);
@@ -140,11 +138,11 @@ GL.prototype.getStatic = function(options, callback) {
               that._pool.release(map);
               return callback(err)
             };
-            
+
             var png = new Png(data, options.width * that._scale, options.height * that._scale, 'rgba');
+            that._pool.release(map);
 
             png.encode(function(buffer){
-              that._pool.release(map);
               return callback(null, buffer, { 'Content-Type': 'image/png' });
             })
         });
