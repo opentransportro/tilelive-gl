@@ -28,6 +28,7 @@ function pool(style, options) {
     }
 
     function destroy(map) {
+        map.release()
         delete map;
     }
 }
@@ -140,9 +141,9 @@ GL.prototype.getStatic = function(options, callback) {
             };
 
             var png = new Png(data, options.width * that._scale, options.height * that._scale, 'rgba');
-            that._pool.release(map);
 
             png.encode(function(buffer){
+              that._pool.release(map);
               return callback(null, buffer, { 'Content-Type': 'image/png' });
             })
         });
