@@ -116,9 +116,9 @@ GL.prototype.getTile = function(z, x, y, callback) {
     var options = {
         // pass center in lat, lng order
         center: center,
-        width: 256,
-        height: 256,
-        zoom: z-1
+        width: 512,
+        height: 512,
+        zoom: z
     };
 
     this.getStatic(options, callback);
