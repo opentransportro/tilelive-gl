@@ -31,7 +31,6 @@ function pool(style, options) {
 
     function destroy(map) {
         map.release()
-        delete map;
     }
 }
 
