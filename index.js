@@ -1,3 +1,5 @@
+"use strict";
+
 var sm = new (require('sphericalmercator'))();
 var mbgl = require('mapbox-gl-native');
 var Png = require('png').Png;
@@ -91,7 +93,8 @@ function mbglRequest(req, callback){
     }
 }
 
-function GL(options, callback) {
+class GL{
+  constructor(options, callback) {
     if (!options || (typeof options !== 'object' && typeof options !== 'string')) return callback(new Error('options must be an object or a string'));
     if (!options.style) return callback(new Error('Missing GL style JSON'));
 
@@ -102,56 +105,60 @@ function GL(options, callback) {
       ratio: this._scale
     });
 
-    return callback(null, this);
-}
+    var gl = this;
 
-GL.registerProtocols = function(tilelive) {
-    tilelive.protocols['gl:'] = GL;
-};
+    setImmediate(callback, null, gl);
+  }
 
-GL.prototype.getTile = function(z, x, y, callback) {
+  getTile(z, x, y, callback) {
 
-    var bbox = sm.bbox(+x,+y,+z, false, '900913');
-    var center = sm.inverse([bbox[0] + ((bbox[2] - bbox[0]) * 0.5), bbox[1] + ((bbox[3] - bbox[1]) * 0.5)]);
+      var bbox = sm.bbox(+x,+y,+z, false, '900913');
+      var center = sm.inverse([bbox[0] + ((bbox[2] - bbox[0]) * 0.5), bbox[1] + ((bbox[3] - bbox[1]) * 0.5)]);
 
-    var options = {
-        // pass center in lat, lng order
-        center: center,
-        width: 512,
-        height: 512,
-        zoom: z
-    };
+      var options = {
+          // pass center in lat, lng order
+          center: center,
+          width: 512,
+          height: 512,
+          zoom: z,
+      };
 
-    this.getStatic(options, callback);
-};
+      this.getStatic(options, callback);
+  };
 
-GL.prototype.getStatic = function(options, callback) {
-    var that = this;
-    this._pool.acquire(function(err, map) {
+  getStatic(options, callback) {
+      var that = this;
+      this._pool.acquire(function(err, map) {
 
-        if (err) {
-          return callback(err)
-        };
+          if (err) {
+            return callback(err)
+          };
 
-        map.render(options, function(err, data) {
+          map.render(options, function(err, data) {
 
-            if (err) {
-              that._pool.release(map);
-              return callback(err)
-            };
+              if (err) {
+                that._pool.release(map);
+                return callback(err)
+              };
+              var width = Math.floor(options.width * that._scale);
+              var height = Math.floor(options.height * that._scale);
 
-            var png = new Png(data, options.width * that._scale, options.height * that._scale, 'rgba');
+              var png = new Png(data, width, height, 'rgba');
 
-            png.encode(function(buffer){
-              that._pool.release(map);
-              return callback(null, buffer, { 'Content-Type': 'image/png' });
-            })
-        });
-    });
-};
+              png.encode(function(buffer){
+                that._pool.release(map);
+                callback(null, buffer, { 'Content-Type': 'image/png' });
+              })
+          });
+      });
+  };
 
-GL.prototype.getInfo = function(callback) {
-  callback(null, {})
+  getInfo(callback) {
+    callback(null, {})
+  }
 }
 
 module.exports = GL;
+module.exports.registerProtocols = function(tilelive) {
+    tilelive.protocols['gl:'] = GL;
+};
