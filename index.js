@@ -2,13 +2,15 @@
 
 var sm = new (require('sphericalmercator'))();
 var mbgl = require('mapbox-gl-native');
-var Png = require('png').Png;
+var Png = require('pngjs').PNG;
+var PngQuant = require('pngquant');
 var vtpbf = require('vt-pbf');
 var stream = require('stream');
 var concat = require('concat-stream');
 var request = require('request');
 var url = require('url');
 var fs = require('fs');
+var concat = require('concat-stream');
 var Pool = require('generic-pool').Pool;
 var N_CPUS = require('os').cpus().length;
 
@@ -142,12 +144,15 @@ class GL{
               var width = Math.floor(options.width * that._scale);
               var height = Math.floor(options.height * that._scale);
 
-              var png = new Png(data, width, height, 'rgba');
+              var png = new Png({width, height, inputHasAlpha: true});
+              png.data = data;
 
-              png.encode(function(buffer){
-                that._pool.release(map);
-                callback(null, buffer, { 'Content-Type': 'image/png' });
-              })
+              var concatStream = concat(function(buffer) {
+                  that._pool.release(map);
+                  return callback(null, buffer, { 'Content-Type': 'image/png' });
+              });
+
+              png.pack().pipe(new PngQuant()).pipe(concatStream);
           });
       });
   };
