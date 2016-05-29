@@ -100,6 +100,7 @@ class GL{
     if (!options.style) return callback(new Error('Missing GL style JSON'));
 
     this._scale = options.query.scale || 1;
+    this._layerTileSize = options.query.layerTileSize || 512;
 
     this._pool = pool(options.style, {
       request: mbglRequest,
@@ -119,9 +120,9 @@ class GL{
       var options = {
           // pass center in lat, lng order
           center: center,
-          width: 512,
-          height: 512,
-          zoom: z,
+          width: this._layerTileSize,
+          height: this._layerTileSize,
+          zoom: z + Math.log2(this._layerTileSize) - 9,
       };
 
       this.getStatic(options, callback);
