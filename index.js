@@ -153,7 +153,7 @@ class GL{
                   return callback(null, buffer, { 'Content-Type': 'image/png' });
               });
 
-              png.pack().pipe(new PngQuant(['-quality', 90])).pipe(concatStream);
+              png.pack().pipe(new PngQuant(['256', '--quality=90'])).pipe(concatStream);
           });
       });
   };
