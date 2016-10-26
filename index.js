@@ -11,6 +11,7 @@ var request = require('request');
 var url = require('url');
 var fs = require('fs');
 var concat = require('concat-stream');
+var omit = require('lodash/omit');
 var Pool = require('generic-pool').Pool;
 var N_CPUS = require('os').cpus().length;
 
@@ -138,22 +139,27 @@ class GL{
 
           map.render(options, function(err, data) {
 
+              that._pool.release(map);
+
               if (err) {
-                that._pool.release(map);
                 return callback(err)
               };
               var width = Math.floor(options.width * that._scale);
               var height = Math.floor(options.height * that._scale);
 
-              var png = new Png({width, height, inputHasAlpha: true});
-              png.data = data;
+              if (options && options.format === "raw") {
+                return callback(null, data, { width: width, height: height, channels: 4 });
+              } else {
+                var png = new Png({ width, height, inputHasAlpha: true });
+                png.data = data;
 
-              var concatStream = concat(function(buffer) {
-                  that._pool.release(map);
-                  return callback(null, buffer, { 'Content-Type': 'image/png' });
-              });
+                var concatStream = concat(function(buffer) {
+                    return callback(null, buffer, { 'Content-Type': 'image/png' });
+                });
 
-              png.pack().pipe(new PngQuant(['256', '--quality=90'])).pipe(concatStream);
+                png.pack().pipe(new PngQuant(['256', '--quality=90'])).pipe(concatStream);
+              }
+
           });
       });
   };
