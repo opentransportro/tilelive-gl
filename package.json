@@ -27,8 +27,7 @@
     "pngquant": "^1.0.0",
     "requestretry": "^1.12.0",
     "sphericalmercator": "^1.0.5",
-    "url": "^0.11.0",
-    "vt-pbf": "^2.0.2"
+    "url": "^0.11.0"
   },
   "devDependencies": {
     "mkdirp": "^0.5.1",

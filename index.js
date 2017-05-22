@@ -4,7 +4,6 @@ var sm = new (require('sphericalmercator'))();
 var mbgl = require('@mapbox/mapbox-gl-native');
 var Png = require('pngjs').PNG;
 var PngQuant = require('pngquant');
-var vtpbf = require('vt-pbf');
 var stream = require('stream');
 var concat = require('concat-stream');
 var request = require('requestretry');
