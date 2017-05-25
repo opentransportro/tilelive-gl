@@ -19,7 +19,7 @@
     }
   ],
   "dependencies": {
-    "@mapbox/mapbox-gl-native": "mapbox/mapbox-gl-native#fd344aaa14e4069bdffb0802f6e5cfb1bdeb9807",
+    "@mapbox/mapbox-gl-native": "mapbox/mapbox-gl-native#1b16be409a24ee89c7d608750fb4626fd08e1841",
     "concat-stream": "^1.5.1",
     "generic-pool": "^2.4.2",
     "lodash": "^4.16.4",
