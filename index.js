@@ -11,7 +11,7 @@ var url = require('url');
 var fs = require('fs');
 var concat = require('concat-stream');
 var omit = require('lodash/omit');
-var Pool = require('generic-pool').Pool;
+var createPool = require('generic-pool').createPool;
 var N_CPUS = require('os').cpus().length;
 
 mbgl.on('message', function(msg) {
@@ -19,20 +19,22 @@ mbgl.on('message', function(msg) {
 });
 
 function pool(style, options) {
-    return new Pool({
-        create: create,
-        destroy: destroy,
+    return createPool({
+      create: create,
+      destroy: destroy,
+    }, {
         max: N_CPUS
     });
 
-    function create(callback) {
+    async function create() {
         var map = new mbgl.Map(options);
         var loaded = map.load(style);
-        return callback(null, map);
+        return map;
     }
 
-    function destroy(map) {
+    async function destroy(map) {
         map.release()
+        return true
     }
 }
 
