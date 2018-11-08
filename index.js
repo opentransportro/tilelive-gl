@@ -19,7 +19,7 @@ mbgl.on('message', function(msg) {
 });
 
 function pool(style, options) {
-    return Pool({
+    return new Pool({
         create: create,
         destroy: destroy,
         max: N_CPUS
