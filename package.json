@@ -19,20 +19,20 @@
     }
   ],
   "dependencies": {
-    "@mapbox/mapbox-gl-native": "^4.0.0",
+    "@mapbox/mapbox-gl-native": "^4.1.0",
     "concat-stream": "^1.5.1",
-    "generic-pool": "^2.4.2",
-    "lodash": "^4.16.4",
-    "pngjs": "^2.3.1",
+    "generic-pool": "^3.4.2",
+    "lodash": "^4.17.11",
+    "pngjs": "^3.3.3",
     "pngquant": "^1.0.0",
-    "requestretry": "^1.12.0",
+    "requestretry": "^3.0.2",
     "sphericalmercator": "^1.0.5",
     "url": "^0.11.0"
   },
   "devDependencies": {
     "mkdirp": "^0.5.1",
-    "request": "^2.58.0",
-    "st": "^0.5.4",
+    "request": "^2.88.0",
+    "st": "^1.2.2",
     "tape": "^4.0.0",
     "tilelive": "^5.7.1"
   },

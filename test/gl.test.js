@@ -5,13 +5,13 @@
 var TileSource = require('..');
 var test = require('tape').test;
 var tilelive = require('tilelive');
-var mbgl = TileSource.mbgl;
+var mbgl = require('@mapbox/mapbox-gl-native')
 
 // These calls are all effectively synchronous though they use a callback.
 test('TileSource', function(t) {
     t.test('fileSource', function(t) {
         t.test('must have a request method', function(t) {
-            var fileSource = new mbgl.FileSource();
+            var fileSource = new mbgl.Map();
 
             t.throws(function() {
                 TileSource(fileSource);
@@ -20,7 +20,7 @@ test('TileSource', function(t) {
         });
 
         t.test('must have a cancel method', function(t) {
-            var fileSource = new mbgl.FileSource();
+            var fileSource = new mbgl.Map();
             fileSource.request = function() {};
 
             t.throws(function() {
@@ -34,7 +34,7 @@ test('TileSource', function(t) {
 });
 
 test('GL', function(t) {
-    var fileSource = new mbgl.FileSource();
+    var fileSource = new mbgl.Map();
     fileSource.request = function(req) {
         req.respond(null, { data: new Buffer(0) });
     };

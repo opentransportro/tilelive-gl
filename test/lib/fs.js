@@ -1,22 +1,24 @@
-'use strict';
+'use strict'
 
 /* jshint node:true */
 
-var mbgl = require('mapbox-gl-native');
-var fs = require('fs');
-var path = require('path');
+var mbgl = require('@mapbox/mapbox-gl-native')
+var fs = require('fs')
+var path = require('path')
 
-var base = path.join(__dirname, '..');
+var base = path.join(__dirname, '..')
 
-var fileSource = new mbgl.FileSource();
-fileSource.request = function(req) {
+var fileSource = {
+  request: function(req) {
     fs.readFile(path.join(base, req.url), function(err, data) {
-        req.respond(err, { data: data });
-    });
-};
+      req.respond(err, { data: data })
+    })
+  },
+  cancel: function(req) {
+    req.canceled = true
+  }
+}
 
-fileSource.cancel = function(req) {
-    req.canceled = true;
-};
+var map = new mbgl.Map(fileSource)
 
-module.exports = fileSource;
+module.exports = map
